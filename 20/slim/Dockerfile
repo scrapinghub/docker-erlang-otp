@@ -1,12 +1,14 @@
 FROM debian:stretch
 
-ENV OTP_VERSION="20.3.8.26"
+ADD keepcase.patch /
+
+ENV OTP_VERSION="20.3.8.24"
 
 # We'll install the build dependencies, and purge them on the last step to make
 # sure our final image contains only what we've just built:
 RUN set -xe \
 	&& OTP_DOWNLOAD_URL="https://github.com/erlang/otp/archive/OTP-${OTP_VERSION}.tar.gz" \
-	&& OTP_DOWNLOAD_SHA256="dce78b60938a48b887317e5222cff946fd4af36666153ab2f0f022aa91755813" \
+	&& OTP_DOWNLOAD_SHA256="588e34a89f9ea8ebc3bda0918e4e1f4f7366888278f5e7ece60f6f1fa42aef60" \
 	&& fetchDeps=' \
 		curl \
 		ca-certificates' \
@@ -37,6 +39,7 @@ RUN set -xe \
 	&& tar -xzf otp-src.tar.gz -C $ERL_TOP --strip-components=1 \
 	&& rm otp-src.tar.gz \
 	&& ( cd $ERL_TOP \
+	  && patch -p1 < /keepcase.patch \
 	  && ./otp_build autoconf \
 	  && gnuArch="$(dpkg-architecture --query DEB_HOST_GNU_TYPE)" \
 	  && ./configure --build="$gnuArch" \
