@@ -1,6 +1,8 @@
-FROM debian:stretch
+FROM debian:buster
 
-ENV OTP_VERSION="22.1.8"
+ADD keepcase.patch /
+
+ENV OTP_VERSION="22.3"
 
 LABEL org.opencontainers.image.version=$OTP_VERSION
 
@@ -8,7 +10,7 @@ LABEL org.opencontainers.image.version=$OTP_VERSION
 # sure our final image contains only what we've just built:
 RUN set -xe \
 	&& OTP_DOWNLOAD_URL="https://github.com/erlang/otp/archive/OTP-${OTP_VERSION}.tar.gz" \
-	&& OTP_DOWNLOAD_SHA256="7302be70cee2c33689bf2c2a3e7cfee597415d0fb3e4e71bd3e86bd1eff9cfdc" \
+	&& OTP_DOWNLOAD_SHA256="886e6dbe1e4823c7e8d9c9c1ba8315075a1a9f7717f5a1eaf3b98345ca6c798e" \
 	&& fetchDeps=' \
 		curl \
 		ca-certificates' \
@@ -39,6 +41,7 @@ RUN set -xe \
 	&& tar -xzf otp-src.tar.gz -C $ERL_TOP --strip-components=1 \
 	&& rm otp-src.tar.gz \
 	&& ( cd $ERL_TOP \
+	  && patch -p1 < /keepcase.patch \
 	  && ./otp_build autoconf \
 	  && gnuArch="$(dpkg-architecture --query DEB_HOST_GNU_TYPE)" \
 	  && ./configure --build="$gnuArch" \
