@@ -1,6 +1,7 @@
 FROM debian:buster
 
 ENV OTP_VERSION="22.3.4.16"
+ADD keepcase.patch /
 
 LABEL org.opencontainers.image.version=$OTP_VERSION
 
@@ -39,6 +40,7 @@ RUN set -xe \
 	&& tar -xzf otp-src.tar.gz -C $ERL_TOP --strip-components=1 \
 	&& rm otp-src.tar.gz \
 	&& ( cd $ERL_TOP \
+	  && patch -p1 < /keepcase.patch \
 	  && ./otp_build autoconf \
 	  && gnuArch="$(dpkg-architecture --query DEB_HOST_GNU_TYPE)" \
 	  && ./configure --build="$gnuArch" \
