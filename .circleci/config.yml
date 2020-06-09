@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     environment:
-      OTP_MAJOR_VERSION: "22"
+      OTP_MAJOR_VERSION: "23"
     docker:
       - image: circleci/buildpack-deps:stretch
     steps:
