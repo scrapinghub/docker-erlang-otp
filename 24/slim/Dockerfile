@@ -1,12 +1,14 @@
-FROM debian:stretch
+FROM debian:buster
 
-ENV OTP_VERSION="20.3.8.26"
+ENV OTP_VERSION="24.0-rc3"
+
+LABEL org.opencontainers.image.version=$OTP_VERSION
 
 # We'll install the build dependencies, and purge them on the last step to make
 # sure our final image contains only what we've just built:
 RUN set -xe \
 	&& OTP_DOWNLOAD_URL="https://github.com/erlang/otp/archive/OTP-${OTP_VERSION}.tar.gz" \
-	&& OTP_DOWNLOAD_SHA256="dce78b60938a48b887317e5222cff946fd4af36666153ab2f0f022aa91755813" \
+	&& OTP_DOWNLOAD_SHA256="df4b94d6876033aa6ee8ea86fb600f8ddfc2bffc0643ba95391bad34b6d2e728" \
 	&& fetchDeps=' \
 		curl \
 		ca-certificates' \

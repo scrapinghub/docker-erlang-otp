@@ -1,9 +1,9 @@
 #!/bin/bash
 set -eu
 
-declare -a -r versions=( 22 21 20 19 18 )
+declare -a -r versions=(24 23 22 21 20 19 18 )
 declare -A -r aliases=(
-	[22]='latest'
+	[23]='latest'
 )
 
 # get the most recent commit which modified any of "$@"
@@ -39,7 +39,15 @@ extractVersion() {
   awk '
         $1 == "ENV" && /_VERSION/ {
         match($2, /"(.*)"/)
-        print substr($2, RSTART + 1, RLENGTH - 2)
+        versionStr = substr($2, RSTART + 1, RLENGTH - 2)
+        versionStrLength = split(versionStr, versionStrArray, ".")
+        if(versionStrLength > 3) {
+            print versionStr
+        } else if(versionStrLength > 2){
+            print versionStr ".0"
+        } else {
+            print versionStr ".0.0"
+        }
         exit
       }'
 
@@ -86,7 +94,9 @@ for version in "${versions[@]}"; do
 		variantArches=( amd64 arm32v7 arm64v8 i386 s390x ppc64le )
 
 		case "$version" in
-		        19|18) variantArches=( ${variantArches[@]/ppc64le} )
+		    21|20|19|18)
+				variantArches=( ${variantArches[@]/s390x} )
+				variantArches=( ${variantArches[@]/ppc64le} )
 		esac
 
 		echo
